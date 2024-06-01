@@ -1,0 +1,56 @@
+Sidebar Paths
+
+Account Management
+Create Admin Account
+Modify Admin Account
+Delete Admin Account
+Manage Access Rights
+
+Content Management
+Moderate Administrator Work
+Manage Reports
+Manage Verification Requests
+
+User Management
+View User List
+Suspend/Reactivate User Account
+
+Publication Management
+View Participation Results
+View Platform Statistics
+Create Publication
+View Publications
+Delete Publication
+Modify Publication
+Moderate Participations
+
+Authentication
+Login
+Reset Password
+Grouping Suggestions
+
+Account Management
+Create Admin Account
+Modify Admin Account
+Delete Admin Account
+Manage Access Rights
+
+User Management
+View User List
+Suspend/Reactivate User Account
+
+Content Management
+Moderate Administrator Work
+Manage Reports
+Manage Verification Requests
+
+Publication Management
+Create Publication
+View Publications
+Delete Publication
+Modify Publication
+Moderate Participations
+
+Statistics
+View Participation Results
+View Platform Statistics
