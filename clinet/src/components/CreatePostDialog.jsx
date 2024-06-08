@@ -177,6 +177,9 @@ const CreatePostDialog = ({ open, onClose, algeriaCities }) => {
       const response = await createPublication(dataWithFiles);
 
       console.log("Publication created:", response.data);
+
+      resetForm(); // Optionally reset the form after successful submission
+      onClose();
       // Handle success, e.g., redirect or show a success message
     } catch (error) {
       console.error("Error creating publication:", error);
