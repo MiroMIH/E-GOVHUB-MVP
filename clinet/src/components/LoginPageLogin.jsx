@@ -78,12 +78,7 @@ const LoginPageLogin = () => {
           InputProps={{
             style: { color: "black" }, // Change text color to black
           }}
-          sx={{
-            "& .MuiInputLabel-root": { color: "gray" },
-            border: 1,
-            borderRadius: 2,
-            backgroundColor: "#f5f5f5", // Off-white background color
-          }} // Style label, input border, and background color
+         
         />
         <TextField
           name="password"
@@ -98,12 +93,7 @@ const LoginPageLogin = () => {
           InputProps={{
             style: { color: "black" }, // Change text color to black
           }}
-          sx={{
-            "& .MuiInputLabel-root": { color: "gray" },
-            border: 1,
-            borderRadius: 2,
-            backgroundColor: "#f5f5f5", // Off-white background color
-          }} // Style label, input border, and background color
+         
         />
         <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
           <Typography variant="body2" sx={{ color: "gray", paddingTop: 1 }}>
