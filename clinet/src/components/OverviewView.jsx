@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import "chart.js/auto";
 import { Typography, Grid, Card, CardContent } from "@mui/material";
 import { Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Paper } from "@mui/material";
-import FlexBetween from "./FlexBetween";
 import { Pie, Bar } from "react-chartjs-2";
+import { AccountCircle, Description, Comment, Chat } from "@mui/icons-material"; // Import icons
+import FlexBetween from "./FlexBetween";
 
 const OverviewView = ({ data }) => {
   const [roleDistributionData, setRoleDistributionData] = useState(null);
@@ -93,40 +94,48 @@ const OverviewView = ({ data }) => {
       <Grid item xs={12} sm={6} md={3}>
         <Card>
           <CardContent>
-            <Typography variant="h6" component="h2">
-              Total Users
-            </Typography>
-            <Typography variant="h4">{data?.data?.users || 0}</Typography>
+            <FlexBetween>
+              <Typography variant="h6" component="h2" style={{ display: "flex", alignItems: "center" }}>
+                <AccountCircle sx={{ fontSize: 28, marginRight: "0.5rem" }} /> Total Users
+              </Typography>
+              <Typography variant="h4">{data?.data?.users || 0}</Typography>
+            </FlexBetween>
           </CardContent>
         </Card>
       </Grid>
       <Grid item xs={12} sm={6} md={3}>
         <Card>
           <CardContent>
-            <Typography variant="h6" component="h2">
-              Total Publications
-            </Typography>
-            <Typography variant="h4">{data?.data?.publications || 0}</Typography>
+            <FlexBetween>
+              <Typography variant="h6" component="h2" style={{ display: "flex", alignItems: "center" }}>
+                <Description sx={{ fontSize: 28, marginRight: "0.5rem" }} /> Total Publications
+              </Typography>
+              <Typography variant="h4">{data?.data?.publications || 0}</Typography>
+            </FlexBetween>
           </CardContent>
         </Card>
       </Grid>
       <Grid item xs={12} sm={6} md={3}>
         <Card>
           <CardContent>
-            <Typography variant="h6" component="h2">
-              Total Comments
-            </Typography>
-            <Typography variant="h4">{data?.data?.comments || 0}</Typography>
+            <FlexBetween>
+              <Typography variant="h6" component="h2" style={{ display: "flex", alignItems: "center" }}>
+                <Comment sx={{ fontSize: 28, marginRight: "0.5rem" }} /> Total Comments
+              </Typography>
+              <Typography variant="h4">{data?.data?.comments || 0}</Typography>
+            </FlexBetween>
           </CardContent>
         </Card>
       </Grid>
       <Grid item xs={12} sm={6} md={3}>
         <Card>
           <CardContent>
-            <Typography variant="h6" component="h2">
-              Average Comments per Publication
-            </Typography>
-            <Typography variant="h4">{data?.data?.averageCommentsPerPublication?.toFixed(2) || 0}</Typography>
+            <FlexBetween>
+              <Typography variant="h6" component="h2" style={{ display: "flex", alignItems: "center" }}>
+                <Chat sx={{ fontSize: 28, marginRight: "0.5rem" }} /> Average Comments per Publication
+              </Typography>
+              <Typography variant="h4">{data?.data?.averageCommentsPerPublication?.toFixed(2) || 0}</Typography>
+            </FlexBetween>
           </CardContent>
         </Card>
       </Grid>

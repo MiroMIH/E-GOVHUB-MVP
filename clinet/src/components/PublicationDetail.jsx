@@ -2,8 +2,20 @@ import React from "react";
 import { Dialog, DialogContent, Typography, Button, Divider, Box, Chip, TextField } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { EventOutlined } from "@mui/icons-material";
+import { useGetCommentsQuery } from "../state/api";
+import { useEffect } from "react";
+import { useState } from "react";
 
 const PublicationDetail = ({ publication, onClose }) => {
+  const { data: comments = [], isLoading, isError } = useGetCommentsQuery(publication.comments); // Use the API query hook to fetch comments
+  const [fetchedComments, setFetchedComments] = useState([]);
+
+  useEffect(() => {
+    if (comments) {
+      setFetchedComments(comments);
+    }
+  }, [comments]);
+
   if (!publication || !publication.comments) {
     return null;
   }
@@ -84,10 +96,10 @@ const PublicationDetail = ({ publication, onClose }) => {
             <Typography variant="h6" component="h2" mb={1}>
               Comments
             </Typography>
-            {publication.comments.map((comment, index) => (
+            {comments.map((comment, index) => (
               <Box key={index} mb={2} p={2} bgcolor="rgba(0, 0, 0, 0.1)" borderRadius="4px">
                 <Typography variant="body1">{comment.content}</Typography>
-                <Typography variant="body2" color="textSecondary">{`Posted by ${comment.createdBy} on ${new Date(comment.createdAt).toLocaleString()}`}</Typography>
+                <Typography variant="body2" color="textSecondary">{`Posted by ${comment.fullName} on ${new Date(comment.createdAt).toLocaleString()}`}</Typography>
               </Box>
             ))}
           </Box>

@@ -1,5 +1,6 @@
 import Publication from "../models/Publication.js";
 import Comment from "../models/Comment.js";
+import User from "../models/User.js"; // Adjust the path based on your file structure
 
 export async function getAllPublications(req, res) {
     try {
@@ -143,3 +144,42 @@ export async function deletePublication(req, res) {
         res.status(500).json({ message: "Error deleting publication" });
     }
 }
+
+
+
+
+
+  // Async function to get comments with full user names
+  export async function getCommentsWithUserNames(req, res) {
+    try {
+      const { comments } = req.body; // Assuming comments are sent in the request body
+  
+      if (!comments || !Array.isArray(comments)) {
+        return res.status(400).json({ error: "Invalid comments data" });
+      }
+  
+      // Fetch users who created these comments
+      const userIds = comments.map((comment) => comment.createdBy);
+  
+      // Fetch users based on userIds
+      const users = await User.find({ _id: { $in: userIds } });
+  
+      // Map users to an object for quick lookup
+      const userMap = users.reduce((map, user) => {
+        map[user._id] = `${user.firstName} ${user.lastName}`;
+        return map;
+      }, {});
+  
+      // Add fullName field to each comment
+      const commentsWithFullNames = comments.map((comment) => ({
+        ...comment,
+        fullName: userMap[comment.createdBy] || "Unknown User",
+      }));
+  
+      res.status(200).json(commentsWithFullNames);
+    } catch (error) {
+      console.error("Error fetching comments with user names:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+  

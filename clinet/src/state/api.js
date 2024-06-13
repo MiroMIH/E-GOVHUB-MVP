@@ -20,7 +20,7 @@ export const api = createApi({
     },
   }),
   reducerPath: "adminApi",
-  tagTypes: ["User", "Users", "Publication","Registration"],
+  tagTypes: ["User", "Users", "Publication", "Registration"],
   endpoints: (build) => ({
     getUser: build.query({
       query: (id) => `general/user`,
@@ -88,14 +88,13 @@ export const api = createApi({
       query: () => `dashboard/statiques`, // Route to fetch dashboard statistics
       providesTags: ["Dashboard"], // Tag for caching
     }),
-
     // New endpoint to get only citizen users
     getCitizenUsers: build.query({
       query: () => `client/usersCitizens`, // Route to fetch citizen users
       providesTags: ["Users"], // Tag for caching
     }),
     getRegistrations: build.query({
-      query: () => `register/registrations`, // Assuming your endpoint for fetching registrations is 'registration/registrations'
+      query: () => `register/registrations`, // Route to fetch registrations
       providesTags: ["Registration"],
     }),
     deleteRegistration: build.mutation({
@@ -104,6 +103,15 @@ export const api = createApi({
         method: "DELETE",
       }),
       invalidatesTags: ["Registration"],
+    }),
+    // Updated endpoint to fetch comments with full user names using POST
+    getComments: build.query({
+      query: (comments) => ({
+        url: `publication/comments`,
+        method: "POST",
+        body: { comments }, // Send comments data in the request body
+      }),
+      providesTags: ["Comments"], // Tag for caching
     }),
   }),
   onError: (error) => {
@@ -124,7 +132,8 @@ export const {
   useUpdatePublicationMutation,
   useDeletePublicationMutation,
   useGetCitizenUsersQuery,
-  useGetDashboardStatsQuery ,
-  useGetRegistrationsQuery, 
+  useGetDashboardStatsQuery,
+  useGetRegistrationsQuery,
   useDeleteRegistrationMutation,
+  useGetCommentsQuery, // New query hook for comments
 } = api;

@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllPublications, getPublicationById, createPublication, updatePublication, deletePublication } from "../controller/publication.js";
+import { getCommentsWithUserNames,getAllPublications, getPublicationById, createPublication, updatePublication, deletePublication } from "../controller/publication.js";
 import multer from 'multer';
 import protect from "../middleware/authMiddleware.js";
 
@@ -21,9 +21,11 @@ const upload = multer({storage});
 
 // Define routes with prefix '/publications'
 router.get("/publications", getAllPublications);
+router.post("/comments", getCommentsWithUserNames);
 router.get("/publications/:id",protect, getPublicationById);
 router.post("/publications",protect,upload.single('photos'), createPublication);
 router.put("/publications/:id", updatePublication);
 router.delete("/publications/:id",protect, deletePublication);
+
 
 export default router;
