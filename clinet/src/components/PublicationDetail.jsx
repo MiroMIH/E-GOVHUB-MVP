@@ -1,10 +1,9 @@
-import React from "react";
-import { Dialog, DialogContent, Typography, Button, Divider, Box, Chip, TextField } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Dialog, DialogContent, Typography, Button, Divider, Box, TextField, FormControl, InputLabel, Select, MenuItem, Card, CardContent } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { EventOutlined } from "@mui/icons-material";
+import { Pie, Bar } from "react-chartjs-2";
 import { useGetCommentsQuery } from "../state/api";
-import { useEffect } from "react";
-import { useState } from "react";
 
 const PublicationDetail = ({ publication, onClose }) => {
   const { data: comments = [], isLoading, isError } = useGetCommentsQuery(publication.comments); // Use the API query hook to fetch comments
@@ -48,6 +47,64 @@ const PublicationDetail = ({ publication, onClose }) => {
     return <img src={imageUrl} alt="Publication" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "4px" }} />;
   };
 
+  const renderParticipationCharts = () => {
+    if (!publication.participationResults) return null;
+
+    const chartData = {
+      labels: Object.keys(publication.participationResults),
+      datasets: [
+        {
+          label: "Participation",
+          data: Object.values(publication.participationResults),
+          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4CAF50", "#FF9800", "#9C27B0"],
+        },
+      ],
+    };
+
+    const cardStyle = {
+      minWidth: 300, // Fixed width for the card
+      height: "100%", // Ensures the card occupies full height
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+    };
+
+    const chartOptions = {
+      plugins: {
+        legend: {
+          display: true,
+          position: "bottom",
+        },
+      },
+    };
+
+    return (
+      <Box display="flex" gap={2} justifyContent="center">
+        <Card sx={cardStyle}>
+          <CardContent style={{ height: "100%" }}>
+            <Pie data={chartData} options={{ ...chartOptions, maintainAspectRatio: false }} />
+          </CardContent>
+        </Card>
+        <Card sx={cardStyle}>
+          <CardContent style={{ height: "100%" }}>
+            <Bar data={chartData} options={{ ...chartOptions, maintainAspectRatio: false }} />
+          </CardContent>
+        </Card>
+      </Box>
+    );
+  };
+
+  const getCommentBackgroundColor = (sentiment) => {
+    switch (sentiment) {
+      case "positive":
+        return "rgba(129, 199, 132, 0.5)"; // greenish
+      case "negative":
+        return "rgba(239, 83, 80, 0.5)"; // reddish
+      default:
+        return "rgba(0, 0, 0, 0.1)"; // neutral
+    }
+  };
+
   return (
     <Dialog open={true} onClose={onClose} fullWidth maxWidth="md">
       <DialogContent>
@@ -85,9 +142,7 @@ const PublicationDetail = ({ publication, onClose }) => {
                 <Typography variant="h6" component="h2" mb={1}>
                   Participation Results
                 </Typography>
-                {publication.participationOptions.map((option) => (
-                  <Chip key={option} label={`${option.toUpperCase()}: ${publication.participationResults && publication.participationResults[option] ? publication.participationResults[option] : "N/A"}`} sx={{ backgroundColor: "#81C784", mr: 1, mb: 1 }} />
-                ))}
+                <Box mt={2}>{renderParticipationCharts()}</Box>
               </Box>
             </>
           )}
@@ -97,7 +152,7 @@ const PublicationDetail = ({ publication, onClose }) => {
               Comments
             </Typography>
             {comments.map((comment, index) => (
-              <Box key={index} mb={2} p={2} bgcolor="rgba(0, 0, 0, 0.1)" borderRadius="4px">
+              <Box key={index} mb={2} p={2} bgcolor={getCommentBackgroundColor(comment.sentiment)} borderRadius="4px">
                 <Typography variant="body1">{comment.content}</Typography>
                 <Typography variant="body2" color="textSecondary">{`Posted by ${comment.fullName} on ${new Date(comment.createdAt).toLocaleString()}`}</Typography>
               </Box>

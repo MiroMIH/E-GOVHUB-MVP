@@ -7,6 +7,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import { exec } from "child_process"; // Import exec from child_process
 import multer from 'multer';
+import './jobScheduler.js'; // Import the job scheduler
 import path from 'path';
 
 
@@ -113,6 +114,26 @@ app.get("/run-script", (req, res) => {
 // app.post("/client", addUser); // Assuming addUser is defined elsewhere
 
 // MONGODB SETUP
+const communes = ["El Harrach", "Bologhine", "Casbah"];
+
+async function updateUsers() {
+  try {
+    // Find all users that do not have the commune field set
+    const users = await User.find({ commune: { $exists: false } });
+
+    // Update each user with a random commune value
+    for (const user of users) {
+      const randomCommune = communes[Math.floor(Math.random() * communes.length)];
+      user.commune = randomCommune;
+      await user.save();
+    }
+
+    console.log(`Updated ${users.length} users with random commune values.`);
+  } catch (error) {
+    console.error('Error updating users:', error);
+  }
+}
+
 
 
 
@@ -128,6 +149,9 @@ mongoose.connect(process.env.MONGO_URL)
     app.listen(PORT, () => {
       console.log(`app is listening to port : ${PORT}`);
     });
+
+     //updateUsers();
+
 
     // Insert initial data into the database
      //User.insertMany(dataUser);

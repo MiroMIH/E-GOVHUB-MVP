@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Grid, Card, CardContent, Button, FormControl, InputLabel, Select, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, TablePagination, Paper } from "@mui/material";
+import { Typography, Grid, Card, CardContent, Button, FormControl, InputLabel, Select, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, TablePagination, Paper, Chip } from "@mui/material";
 import { Pie, Bar } from "react-chartjs-2";
 import axios from "axios";
 import { makeStyles } from "@mui/styles";
+import { green, red, purple, blue, orange } from "@mui/material/colors";
 
 // Styles
 const useStyles = makeStyles({
@@ -25,6 +26,9 @@ const useStyles = makeStyles({
   chartContainer: {
     position: "relative",
     height: "50vh",
+  },
+  chip: {
+    borderRadius: 4, // Making chips rectangular
   },
 });
 
@@ -139,6 +143,30 @@ const CommentsView = ({ data }) => {
 
   const filteredComments = commentsData.filter((comment) => (filterSentiment === "all" || comment.sentiment === filterSentiment) && (filterLanguage === "all" || comment.language === filterLanguage));
 
+  const getSentimentChipColor = (sentiment) => {
+    switch (sentiment) {
+      case "positive":
+        return "#4caf50"; // Green
+      case "negative":
+        return "#f44336"; // Red
+      default:
+        return "#9e9e9e"; // Grey
+    }
+  };
+
+  const getLanguageChipColor = (language) => {
+    switch (language) {
+      case "ar":
+        return "#9c27b0"; // Purple
+      case "fr":
+        return "#2196f3"; // Blue
+      case "en":
+        return "#ff9800"; // Orange
+      default:
+        return "#9e9e9e"; // Grey
+    }
+  };
+
   return (
     <Grid container spacing={3} style={{ padding: "20px" }}>
       {/* Timer for Next NLP Execution */}
@@ -237,8 +265,12 @@ const CommentsView = ({ data }) => {
                   {filteredComments.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((comment) => (
                     <TableRow key={comment._id}>
                       <TableCell>{comment.content}</TableCell>
-                      <TableCell>{comment.language}</TableCell>
-                      <TableCell>{comment.sentiment}</TableCell>
+                      <TableCell>
+                        <Chip label={comment.language} className={classes.chip} style={{ backgroundColor: getLanguageChipColor(comment.language) }} />
+                      </TableCell>
+                      <TableCell>
+                        <Chip label={comment.sentiment} className={classes.chip} style={{ backgroundColor: getSentimentChipColor(comment.sentiment) }} />
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

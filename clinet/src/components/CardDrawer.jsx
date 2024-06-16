@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Drawer, List, ListItem, ListItemText, Select, Typography, MenuItem, TextField, Button, Divider, Box } from "@mui/material";
 import { Checkbox, FormControlLabel } from "@mui/material";
 import { useUpdatePublicationMutation } from "../state/api";
+import { RadioGroup, Radio } from "@mui/material";
 
 import LocationMenu from "./LocationMenu";
 
 const CardDrawer = ({ open, onClose, cardData, algeriaCities }) => {
   // Destructuring cardData for initial state
-  const { title, type, content, startDate, endDate, wilaya, commune, domain, allowAnonymousParticipation } = cardData;
+  const { title, type, content, startDate, endDate, wilaya, commune, domain, allowAnonymousParticipation, repeat } = cardData;
   const [updatePublicationMutation] = useUpdatePublicationMutation();
 
   // State for edited data
@@ -21,6 +22,7 @@ const CardDrawer = ({ open, onClose, cardData, algeriaCities }) => {
     wilaya: wilaya || "",
     domain: domain || "",
     allowAnonymousParticipation: allowAnonymousParticipation || false,
+    repeat: repeat || "none", // Reset the repeat field
   });
   // console.log("Card Data:", cardData);
 
@@ -137,6 +139,16 @@ const CardDrawer = ({ open, onClose, cardData, algeriaCities }) => {
                   }
                   label="Allow Anonymous Participation"
                 />
+              </ListItemText>
+            </ListItem>
+            <ListItem>
+              <ListItemText>
+                <RadioGroup name="repeat" value={editedData.repeat} onChange={(e) => handleInputChange(e, "repeat")} row>
+                  <FormControlLabel value="none" control={<Radio />} label="None" />
+                  <FormControlLabel value="weekly" control={<Radio />} label="Weekly" />
+                  <FormControlLabel value="yearly" control={<Radio />} label="Yearly" />
+                  <FormControlLabel value="monthly" control={<Radio />} label="Monthly" />
+                </RadioGroup>
               </ListItemText>
             </ListItem>
           </List>

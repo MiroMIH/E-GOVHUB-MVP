@@ -42,8 +42,10 @@ const UserSchema = new mongoose.Schema(
     updatedAt: {
       type: Date,
       default: Date.now,
-    }
-
+    },
+    commune: {
+      type: String, // Add commune field of type String
+    },
   },
   { timestamps: true }
 );

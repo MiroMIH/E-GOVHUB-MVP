@@ -79,6 +79,7 @@ export async function createPublication(req, res) {
             return res.status(404).json({ message: "Publication not found" });
         }
 
+        
         // Check if there is a comment to be added
         if (updates.comment) {
             // Create a new comment instance

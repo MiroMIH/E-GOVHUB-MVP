@@ -3,6 +3,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, M
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
+import { RadioGroup, Radio } from "@mui/material";
 import LocationMenu from "./LocationMenu"; // Import LocationMenu component
 import { useCreatePublicationMutation } from "../state/api";
 
@@ -49,6 +50,7 @@ const CreatePostDialog = ({ open, onClose, algeriaCities }) => {
     photos: [], // Updated to store multiple photos
     participationOptions: [],
     allowAnonymousParticipation: false,
+    repeat: "none", // Reset the repeat field
   });
   const [imageFileNames, setImageFileNames] = useState([]); // Updated to store multiple file names
   const [createPublication, { isLoading }] = useCreatePublicationMutation(); // Create the createPublication mutation hook
@@ -68,6 +70,7 @@ const CreatePostDialog = ({ open, onClose, algeriaCities }) => {
       photos: [],
       participationOptions: [],
       allowAnonymousParticipation: false,
+      repeat: "none", // Reset the repeat field
     });
     setImageFileNames([]);
   };
@@ -199,6 +202,16 @@ const CreatePostDialog = ({ open, onClose, algeriaCities }) => {
     }));
   };
 
+  const [repeat, setRepeat] = useState("none");
+  // Add this function to handle repeat change
+  const handleRepeatChange = (e) => {
+    setRepeat(e.target.value);
+    setPostData((prevData) => ({
+      ...prevData,
+      repeat: e.target.value,
+    }));
+  };
+
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
       <DialogTitle>Create New Post</DialogTitle>
@@ -281,6 +294,12 @@ const CreatePostDialog = ({ open, onClose, algeriaCities }) => {
                 shrink: true,
               }}
             />
+            <RadioGroup name="repeat" value={repeat} onChange={handleRepeatChange} row>
+              <FormControlLabel value="none" control={<Radio />} label="None" />
+              <FormControlLabel value="weekly" control={<Radio />} label="Weekly" />
+              <FormControlLabel value="yearly" control={<Radio />} label="Yearly" />
+              <FormControlLabel value="monthly" control={<Radio />} label="Monthly" />
+            </RadioGroup>
           </React.Fragment>
         )}
         {activeStep === 2 && (
