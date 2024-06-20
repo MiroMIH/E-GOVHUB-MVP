@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Typography, Divider, RadioGroup, FormControlLabel, Radio, Chip, useTheme } from "@mui/material";
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Typography, Divider, RadioGroup, FormControlLabel, Radio, Chip, useTheme, Grid } from "@mui/material";
 import { useGetCitizenUsersQuery, useAddUserMutation, useDeleteUserMutation, useUpdateUserMutation } from "../../state/api";
 import Header from "../../components/Header";
 import { DataGrid } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline"; // Icon for explanatory paragraph
 
 const UsersCitizens = () => {
   const theme = useTheme();
@@ -107,7 +108,15 @@ const UsersCitizens = () => {
 
   return (
     <Box m="2.5rem">
-      <Header title="UsersCitizens" subtitle="List of Citizens" />
+      <Header title="Citizens" subtitle="List of Citizens" />
+      <Grid container alignItems="center" spacing={3} sx={{ mb: 3 }}>
+        <Grid item>
+          <HelpOutlineIcon color="primary" fontSize="large" />
+        </Grid>
+        <Grid item>
+          <Typography variant="body1">Manage and view details of citizens registered in the system. Add, edit, or delete users as required.</Typography>
+        </Grid>
+      </Grid>
       {isLoading ? (
         <div>Loading...</div>
       ) : (

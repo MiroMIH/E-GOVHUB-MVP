@@ -20,7 +20,7 @@ export const api = createApi({
     },
   }),
   reducerPath: "adminApi",
-  tagTypes: ["User", "Users", "Publication", "Registration"],
+  tagTypes: ["User", "Users", "Publication", "Registration","Emails"],
   endpoints: (build) => ({
     getUser: build.query({
       query: (id) => `general/user`,
@@ -113,6 +113,32 @@ export const api = createApi({
       }),
       providesTags: ["Comments"], // Tag for caching
     }),
+    getAllEmails: build.query({
+      query: () => `emails`, // API endpoint to fetch all emails
+      providesTags: ["Emails"], // Tag for caching
+    }),
+    deleteEmail: build.mutation({
+      query: (id) => ({
+        url: `emails/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Emails"],
+    }),
+     // New endpoints for changing user password and commune
+     changeUserPassword: build.mutation({
+      query: (passwordData) => ({
+        url: `emails/change-password`,
+        method: "PUT",
+        body: passwordData,
+      }),
+    }),
+    changeUserCommune: build.mutation({
+      query: (communeData) => ({
+        url: `emails/change-commune`,
+        method: "PUT",
+        body: communeData,
+      }),
+    }),
   }),
   onError: (error) => {
     console.error("An error occurred:", error);
@@ -136,4 +162,10 @@ export const {
   useGetRegistrationsQuery,
   useDeleteRegistrationMutation,
   useGetCommentsQuery, // New query hook for comments
+  useGetAllEmailsQuery, // New query hook for fetching all emails
+  useDeleteEmailMutation, // New mutation hook for deleting an email
+  useChangeUserPasswordMutation, // New mutation hook for changing user password
+  useChangeUserCommuneMutation, // New mutation hook for changing user commune
+
+
 } = api;

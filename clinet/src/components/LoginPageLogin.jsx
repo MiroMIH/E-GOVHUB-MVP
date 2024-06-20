@@ -78,7 +78,6 @@ const LoginPageLogin = () => {
           InputProps={{
             style: { color: "black" }, // Change text color to black
           }}
-         
         />
         <TextField
           name="password"
@@ -93,25 +92,13 @@ const LoginPageLogin = () => {
           InputProps={{
             style: { color: "black" }, // Change text color to black
           }}
-         
         />
-        <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
-          <Typography variant="body2" sx={{ color: "gray", paddingTop: 1 }}>
-            Forgot Password?
-          </Typography>
+        <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
           <Button variant="contained" type="submit" sx={{ width: "40%" }}>
             Login Now
           </Button>
         </Box>
       </form>
-      <Box sx={{ display: "flex", alignItems: "center", width: "100%", paddingTop: 2 }}>
-        <Typography variant="body2" sx={{ color: "gray" }}>
-          Don't Have An Account?
-        </Typography>
-        <a href="/register" style={{ textDecoration: "none", color: "blue", marginLeft: 5 }}>
-          Sign Up
-        </a>
-      </Box>
     </Box>
   );
 };

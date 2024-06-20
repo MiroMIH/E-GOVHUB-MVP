@@ -11,7 +11,7 @@ export const getUsers = async (req, res) => {
 };
 
 export const addUser = async (req, res) => {
-  const { email, password, firstName, lastName, role, status } = req.body;
+  const { email, password, firstName, lastName, role, status, commune } = req.body;
 
   try {
     // Hash the password
@@ -25,6 +25,7 @@ export const addUser = async (req, res) => {
       lastName,
       role,
       status,
+      commune, // Include commune in the newUser object
     });
 
     // Save the user to the database

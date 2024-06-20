@@ -87,7 +87,11 @@ const CardDrawer = ({ open, onClose, cardData, algeriaCities }) => {
             </ListItem>
             <ListItem>
               <ListItemText>
-                <TextField label="Type" value={editedData.type} onChange={(e) => handleInputChange(e, "type")} fullWidth />
+                <TextField select label="Type" value={editedData.type} onChange={(e) => handleInputChange(e, "type")} fullWidth margin="normal">
+                  <MenuItem value="informative">Informative</MenuItem>
+                  <MenuItem value="poll">Poll</MenuItem>
+                  <MenuItem value="consultation">Consultation</MenuItem>
+                </TextField>
               </ListItemText>
             </ListItem>
             <ListItem>

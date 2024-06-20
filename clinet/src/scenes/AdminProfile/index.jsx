@@ -39,18 +39,7 @@ const AdminProfile = () => {
             transition: "transform 0.3s ease-in-out",
           }}
         >
-          <CardHeader
-            avatar={<Avatar sx={{ bgcolor: "primary.main" }}>{data.firstName[0]}</Avatar>}
-            title={`${data.firstName} ${data.lastName}`}
-            subheader={`Role: ${data.role}`}
-            action={
-              <Tooltip title="Edit Profile">
-                <IconButton>
-                  <EditIcon />
-                </IconButton>
-              </Tooltip>
-            }
-          />
+          <CardHeader avatar={<Avatar sx={{ bgcolor: "primary.main" }}>{data.firstName[0]}</Avatar>} title={`${data.firstName} ${data.lastName}`} subheader={`Role: ${data.role}`} />
           <CardContent>
             <Typography variant="h6" gutterBottom>
               User Information
@@ -85,14 +74,6 @@ const AdminProfile = () => {
               </ListItem>
             </List>
           </CardContent>
-          <CardActions>
-            <Button size="small" color="primary">
-              Edit Profile
-            </Button>
-            <Button size="small" color="secondary">
-              Settings
-            </Button>
-          </CardActions>
         </Card>
       </Grow>
     </Container>

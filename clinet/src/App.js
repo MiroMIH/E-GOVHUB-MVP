@@ -16,6 +16,8 @@ import Statiques from "./scenes/Statiques";
 import AccountVerfication from "./scenes/AccountVerfication";
 import AdminProfile from "./scenes/AdminProfile";
 import Loader from './components/Loader'; // Import the Loader component
+import UpdateDetailsPage from './scenes/UpdateDetails'; // Import the UpdateDetailsPage component
+
 
 function App() {
   const mode = useSelector((state) => state.global.mode);
@@ -64,6 +66,7 @@ function App() {
                 <Route path="/View Platform Statistics" element={<Statiques />} />
                 <Route path="/Account Verification Requests Management" element={<AccountVerfication />} />
                 <Route path="/Admin Profile" element={<AdminProfile />} />
+                <Route path="/Demands Details" element={<UpdateDetailsPage />} />
               </Route>
             </Routes>
           </ThemeProvider>

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useGetRegistrationsQuery, useAddUserMutation, useDeleteRegistrationMutation } from "../../state/api";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { Box, CircularProgress, IconButton, Card, CardContent, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, FormControlLabel, Checkbox } from "@mui/material";
+import { Box, CircularProgress, IconButton, Card, CardContent, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, FormControlLabel, Checkbox, Divider } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
+import InfoIcon from "@mui/icons-material/Info";
 
 const REACT_APP_BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:5001";
 
@@ -94,9 +95,11 @@ const AccountVerification = () => {
       password: selectedRow.password, // Use the hashed password
       firstName: selectedRow.firstName,
       lastName: selectedRow.lastName,
+      commune: selectedRow.commune,
       role: "citizen", // Default role
       status: "active", // Default status
     };
+    console.log(selectedRow.commune);
     console.log("🚀 ~ handleRegisterUser ~ userData:", userData);
 
     try {
@@ -134,6 +137,7 @@ const AccountVerification = () => {
 
       if (response.ok) {
         console.log("Rejection email sent successfully.");
+        await deleteRegistration(selectedRow._id).unwrap();
         // Show the email preview dialog
         setEmailPreview(emailContent);
       } else {
@@ -222,7 +226,14 @@ const AccountVerification = () => {
         <CardContent>
           <Typography variant="h5" component="div" sx={{ mb: 2 }}>
             Registration Data
+            <IconButton color="info" size="small" sx={{ ml: 1 }}>
+              <InfoIcon />
+            </IconButton>
           </Typography>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            This table displays registrations from users. You can verify or reject registrations and download photos as needed.
+          </Typography>
+          <Divider sx={{ my: 2 }} />
           <Box sx={{ height: 600, width: "100%", overflowX: "auto" }}>
             <DataGrid
               rows={rows}
@@ -266,6 +277,7 @@ const AccountVerification = () => {
             Ensure all the details above are correct before proceeding with the verification.
           </Typography>
         </DialogContent>
+
         <DialogActions>
           <Button onClick={handleRegisterUser} color="primary" variant="contained">
             Register User

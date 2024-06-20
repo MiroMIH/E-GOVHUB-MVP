@@ -3,7 +3,7 @@ import { Typography, Grid, Card, CardContent, Button, FormControl, InputLabel, S
 import { Pie, Bar } from "react-chartjs-2";
 import axios from "axios";
 import { makeStyles } from "@mui/styles";
-import { green, red, purple, blue, orange } from "@mui/material/colors";
+import { Language } from "@mui/icons-material";
 
 // Styles
 const useStyles = makeStyles({
@@ -28,7 +28,14 @@ const useStyles = makeStyles({
     height: "50vh",
   },
   chip: {
-    borderRadius: 4, // Making chips rectangular
+    borderRadius: 4,
+  },
+  explanationCard: {
+    padding: "20px",
+    marginBottom: "20px",
+  },
+  icon: {
+    marginRight: "10px",
   },
 });
 
@@ -41,8 +48,8 @@ const CommentsView = ({ data }) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [filterSentiment, setFilterSentiment] = useState("all");
   const [filterLanguage, setFilterLanguage] = useState("all");
-  const [timer, setTimer] = useState(60); // Initial timer set to 60 seconds
   const [open, setOpen] = useState(false);
+  const [timer, setTimer] = useState(0);
 
   useEffect(() => {
     if (data && data.data && data.data.allPublications) {
@@ -77,44 +84,8 @@ const CommentsView = ({ data }) => {
         return acc.concat(publication.comments);
       }, []);
       setCommentsData(allComments);
-
-      // Timer for next NLP execution
-      const interval = setInterval(() => {
-        setTimer((prev) => {
-          if (prev === 1) {
-            // Call the backend endpoint when timer runs out
-            axios
-              .get("http://localhost:5001/run-script")
-              .then((response) => {
-                console.log(response.data);
-                window.location.reload(); // Reload the page after script execution
-              })
-              .catch((error) => {
-                console.error("There was an error executing the script:", error);
-              });
-            return 60; // Reset timer
-          } else {
-            return prev - 1;
-          }
-        });
-      }, 1000);
-
-      return () => clearInterval(interval);
     }
   }, [data]);
-
-  const handleRefreshSentiment = () => {
-    // Call the backend endpoint manually
-    axios
-      .get("http://localhost:5001/run-script")
-      .then((response) => {
-        console.log(response.data);
-        window.location.reload(); // Reload the page after script execution
-      })
-      .catch((error) => {
-        console.error("There was an error executing the script:", error);
-      });
-  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -140,6 +111,31 @@ const CommentsView = ({ data }) => {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const handleRunNLP = () => {
+    if (timer === 0) {
+      // Call the backend endpoint manually
+      axios
+        .get("http://localhost:5001/run-script")
+        .then((response) => {
+          console.log(response.data);
+          setTimer(120); // Start 2-minute timer
+        })
+        .catch((error) => {
+          console.error("There was an error executing the script:", error);
+        });
+    }
+  };
+
+  useEffect(() => {
+    if (timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [timer]);
 
   const filteredComments = commentsData.filter((comment) => (filterSentiment === "all" || comment.sentiment === filterSentiment) && (filterLanguage === "all" || comment.language === filterLanguage));
 
@@ -169,24 +165,111 @@ const CommentsView = ({ data }) => {
 
   return (
     <Grid container spacing={3} style={{ padding: "20px" }}>
-      {/* Timer for Next NLP Execution */}
+      {/* Parent Card */}
       <Grid item xs={12}>
-        <Card className={classes.fullWidthCard}>
-          <CardContent className={classes.centerContent}>
-            <Typography variant="h6" component="h2">
-              Next NLP Execution in: {timer}s
+        <Card sx={{ padding: "20px", textAlign: "center" }}>
+          <CardContent>
+            <Typography variant="h4" component="h1" gutterBottom>
+              Comments and Sentiment Analysis
             </Typography>
-            <Button variant="contained" color="secondary" onClick={handleRefreshSentiment} style={{ marginLeft: "20px" }}>
-              Run NLP Now
-            </Button>
+            <Grid container spacing={3} justifyContent="center" alignItems="center">
+              <Grid item xs={12} md={4}>
+                <Card
+                  sx={{
+                    transition: "transform 0.2s",
+                    "&:hover": {
+                      transform: "scale(1.05)",
+                    },
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    padding: "20px",
+                    height: "100%",
+                  }}
+                >
+                  <CardContent>
+                    <Language sx={{ fontSize: "50px", marginBottom: "10px" }} />
+                    <Typography variant="h6" gutterBottom>
+                      CamemBERT for French
+                    </Typography>
+                    <Typography variant="body1" paragraph>
+                      French-specific NLP model excelling at sentiment analysis in French comments.
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <Card
+                  sx={{
+                    transition: "transform 0.2s",
+                    "&:hover": {
+                      transform: "scale(1.05)",
+                    },
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    padding: "20px",
+                    height: "100%",
+                  }}
+                >
+                  <CardContent>
+                    <Language sx={{ fontSize: "50px", marginBottom: "10px" }} />
+                    <Typography variant="h6" gutterBottom>
+                      DziriBERT for Arabic
+                    </Typography>
+                    <Typography variant="body1" paragraph>
+                      Arabic-specific NLP model for accurate sentiment classification in Arabic comments.
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <Card
+                  sx={{
+                    transition: "transform 0.2s",
+                    "&:hover": {
+                      transform: "scale(1.05)",
+                    },
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    padding: "20px",
+                    height: "100%",
+                  }}
+                >
+                  <CardContent>
+                    <Language sx={{ fontSize: "50px", marginBottom: "10px" }} />
+                    <Typography variant="h6" gutterBottom>
+                      BERT for English
+                    </Typography>
+                    <Typography variant="body1" paragraph>
+                      Widely used NLP model for sentiment analysis in English comments.
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+            {/* Buttons Section */}
+            <Grid item xs={12} container spacing={2} justifyContent="center" alignItems="center" display="flex">
+              <Grid item>
+                <Button variant="contained" color="secondary" onClick={handleRunNLP} disabled={timer > 0} style={{ marginTop: "20px" }}>
+                  {timer > 0 ? `Please wait ${timer}s` : "Run NLP Analysis"}
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button variant="contained" color="primary" onClick={handleClickOpen} style={{ marginTop: "20px" }}>
+                  View Comments and Filters
+                </Button>
+              </Grid>
+            </Grid>
           </CardContent>
         </Card>
-      </Grid>
-      {/* Overview Section */}
-      <Grid item xs={12}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          NLP Sentiment and Language Analysis
-        </Typography>
       </Grid>
       {/* Sentiment Distribution Chart */}
       <Grid item xs={12} md={6}>
@@ -210,16 +293,7 @@ const CommentsView = ({ data }) => {
           </CardContent>
         </Card>
       </Grid>
-      {/* Button to Open Dialog for Comments */}
-      <Grid item xs={12}>
-        <Card className={classes.fullWidthCard}>
-          <CardContent className={classes.centerContent}>
-            <Button variant="contained" color="primary" onClick={handleClickOpen}>
-              View Comments and Filters
-            </Button>
-          </CardContent>
-        </Card>
-      </Grid>
+
       {/* Dialog for Comments and Filters */}
       <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
         <DialogTitle>Comments and Filters</DialogTitle>

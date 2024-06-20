@@ -13,7 +13,7 @@ import {
   useTheme,
   useMediaQuery, // Added import
 } from "@mui/material";
-import { ChevronRightOutlined, ChevronRight, ChevronLeft, AdminPanelSettingsOutlined, SettingsOutlined, DescriptionOutlined, ListAltOutlined, AssignmentOutlined, BarChartOutlined, LockOutlined, PeopleAltOutlined } from "@mui/icons-material";
+import { ChevronRightOutlined, EditAttributesOutlined, ChevronRight, ChevronLeft, AdminPanelSettingsOutlined, SettingsOutlined, DescriptionOutlined, ListAltOutlined, AssignmentOutlined, BarChartOutlined, LockOutlined, PeopleAltOutlined } from "@mui/icons-material";
 
 import { useLocation, useNavigate } from "react-router-dom";
 import FlexBetween from "./FlexBetween";
@@ -68,13 +68,17 @@ const Sidebar = ({ user, drawerWidth, isSidebarOpen, setIsSidebarOpen, isNonMobi
       text: "Browse User List (Citizens)",
       icon: <PeopleAltOutlined />,
     },
+    {
+      text: "Demands Details",
+      icon: <EditAttributesOutlined />,
+    },
   ];
 
   // Show the first two links for superadmin, hide for admin
   if (user.role === "superadmin") {
     navItems.unshift(
       {
-        text: "User Account Management",
+        text: "Admins  Account Management",
         icon: null,
       },
       {
