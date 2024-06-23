@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 import mongoose from 'mongoose';
 import Publication from './models/Publication.js'; // Adjust the path as needed
+import { exec } from 'child_process';
 
 // Function to update the status of all publications
 const updatePublicationStatuses = async () => {
@@ -22,8 +23,9 @@ const updatePublicationStatuses = async () => {
 
       await publication.save();
     }
+    console.log('Publication statuses updated successfully.');
   } catch (error) {
-    console.error("Error updating publication statuses:", error);
+    console.error('Error updating publication statuses:', error);
   }
 };
 
@@ -136,5 +138,15 @@ cron.schedule('*/1 * * * *', async () => {
   console.log('Running the combined job');
   await updatePublicationDates(); // Update publication dates
   await updatePublicationStatuses(); // Update statuses
+  exec("py ./pythonScript/sentiment.py", (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error running sentiment analysis script: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.error(`Sentiment script stderr: ${stderr}`);
+      return;
+    }
+    console.log(`Sentiment script stdout: ${stdout}`);
+  }); 
 });
-  

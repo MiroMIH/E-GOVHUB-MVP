@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Typography, Grid, Card, CardContent, FormControl, InputLabel, Select, MenuItem, Chip } from "@mui/material";
 import { Pie, Bar } from "react-chartjs-2";
 import InfoIcon from "@mui/icons-material/Info";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import LanguageIcon from "@mui/icons-material/Language";
+import PublicIcon from "@mui/icons-material/Public";
 
 const PublicationsView = ({ data }) => {
   const [domainDistributionData, setDomainDistributionData] = useState(null);
   const [filteredDomainData, setFilteredDomainData] = useState(null);
   const [languageDistributionData, setLanguageDistributionData] = useState(null);
-  const [chartType, setChartType] = useState("pie");
   const [selectedDomain, setSelectedDomain] = useState("");
   const [totalPublications, setTotalPublications] = useState(0);
 
@@ -56,10 +58,6 @@ const PublicationsView = ({ data }) => {
     }
   }, [data]);
 
-  const handleChartTypeChange = (event) => {
-    setChartType(event.target.value);
-  };
-
   const handleDomainFilterChange = (event) => {
     const selectedDomain = event.target.value;
     setSelectedDomain(selectedDomain);
@@ -83,71 +81,108 @@ const PublicationsView = ({ data }) => {
 
   return (
     <Grid container justifyContent="center" spacing={3} style={{ padding: "20px" }}>
-      {/* Total Publications Chip at the Top */}
-
-      {/* Domain Distribution Card */}
-      <Grid item xs={12} md={4}>
+      {/* Global Card */}
+      <Grid item xs={12}>
         <Card>
           <CardContent>
-            <Typography variant="h5" component="h2" style={{ marginBottom: "20px", display: "flex" }}>
-              <InfoIcon style={{ marginRight: "8px" }} />
-              Domain Distribution
+            <Typography variant="h4" component="h1" style={{ marginBottom: "20px", display: "flex", alignItems: "center" }}>
+              <PublicIcon style={{ marginRight: "8px" }} />
+              Publications Analytics Overview
             </Typography>
             <Typography variant="body1" color="textSecondary" style={{ marginBottom: "20px" }}>
-              This chart shows the distribution of publication domains. Use the dropdown to filter by domain.
+              This page provides an overview of the publication data, including the distribution of domains and languages. Use the controls and charts below to explore the data in detail.
             </Typography>
-            <FormControl variant="outlined" style={{ marginBottom: "20px", minWidth: 120 }}>
-              <InputLabel>Filter by Domain</InputLabel>
-              <Select value={selectedDomain} onChange={handleDomainFilterChange} label="Filter by Domain">
-                <MenuItem value="">All</MenuItem>
-                {domainDistributionData &&
-                  domainDistributionData.labels.map((domain, index) => (
-                    <MenuItem key={index} value={domain}>
-                      {domain}
-                    </MenuItem>
-                  ))}
-              </Select>
-            </FormControl>
-            {filteredDomainData &&
-              filteredDomainData.labels &&
-              filteredDomainData.datasets &&
-              (chartType === "pie" ? (
-                <Pie
-                  data={filteredDomainData}
-                  options={{
-                    plugins: {
-                      tooltip: {
-                        callbacks: {
-                          label: function (tooltipItem) {
-                            return `${filteredDomainData.labels[tooltipItem.index]}: ${filteredDomainData.datasets[0].data[tooltipItem.index]}`;
-                          },
-                        },
-                      },
-                    },
-                  }}
-                  width={200} // Adjusted size
-                  height={200} // Adjusted size
-                />
-              ) : null)}
-            <Typography variant="body2" color="textSecondary">
-              Click on a slice to see details.
-            </Typography>
-          </CardContent>
-        </Card>
-      </Grid>
+            <Chip label={`Total Publications: ${totalPublications}`} color="primary" style={{ marginBottom: "20px" }} />
 
-      {/* Language Distribution Card */}
-      <Grid item xs={12} md={8}>
-        <Card>
-          <CardContent>
-            <Typography variant="h5" component="h2" style={{ marginBottom: "20px", display: "flex" }}>
-              <InfoIcon style={{ marginRight: "8px" }} />
-              Language Distribution
-            </Typography>
-            <Typography variant="body1" color="textSecondary" style={{ marginBottom: "20px" }}>
-              This chart displays the distribution of publication languages. It provides insights into the prevalence of different languages used across publications.
-            </Typography>
-            {languageDistributionData && <Bar data={languageDistributionData} />}
+            {/* Domain Distribution and Language Distribution Cards */}
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h5" component="h2" style={{ marginBottom: "20px", display: "flex", alignItems: "center" }}>
+                      <BarChartIcon style={{ marginRight: "8px" }} />
+                      Domain Distribution
+                    </Typography>
+                    <Typography variant="body1" color="textSecondary" style={{ marginBottom: "20px" }}>
+                      This chart shows the distribution of publication domains. Use the dropdown to filter by domain.
+                    </Typography>
+                    <FormControl variant="outlined" style={{ marginBottom: "20px", minWidth: 120 }}>
+                      <InputLabel>Filter by Domain</InputLabel>
+                      <Select value={selectedDomain} onChange={handleDomainFilterChange} label="Filter by Domain">
+                        <MenuItem value="">All</MenuItem>
+                        {domainDistributionData &&
+                          domainDistributionData.labels.map((domain, index) => (
+                            <MenuItem key={index} value={domain}>
+                              {domain}
+                            </MenuItem>
+                          ))}
+                      </Select>
+                    </FormControl>
+                    {filteredDomainData && filteredDomainData.labels && filteredDomainData.datasets && (
+                      <div style={{ position: "relative", width: "100%", height: "300px" }}>
+                        <Bar
+                          data={filteredDomainData}
+                          options={{
+                            plugins: {
+                              tooltip: {
+                                callbacks: {
+                                  label: function (context) {
+                                    const label = context.label || "";
+                                    const value = context.raw || 0;
+                                    return `${label}: ${value}`;
+                                  },
+                                },
+                              },
+                            },
+                            responsive: true,
+                            maintainAspectRatio: false,
+                          }}
+                        />
+                      </div>
+                    )}
+                    <Typography variant="body2" color="textSecondary">
+                      Click on a bar to see details.
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h5" component="h2" style={{ marginBottom: "20px", display: "flex", alignItems: "center" }}>
+                      <LanguageIcon style={{ marginRight: "8px" }} />
+                      Language Distribution
+                    </Typography>
+                    <Typography variant="body1" color="textSecondary" style={{ marginBottom: "20px" }}>
+                      This chart displays the distribution of publication languages. It provides insights into the prevalence of different languages used across publications.
+                    </Typography>
+                    {languageDistributionData && (
+                      <div style={{ position: "relative", width: "100%", height: "370px" }}>
+                        <Pie
+                          data={languageDistributionData}
+                          options={{
+                            plugins: {
+                              tooltip: {
+                                callbacks: {
+                                  label: function (context) {
+                                    const label = context.label || "";
+                                    const value = context.raw || 0;
+                                    return `${label}: ${value}`;
+                                  },
+                                },
+                              },
+                            },
+                            responsive: true,
+                            maintainAspectRatio: false,
+                          }}
+                        />
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
           </CardContent>
         </Card>
       </Grid>

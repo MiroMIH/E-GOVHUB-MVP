@@ -116,7 +116,7 @@ const CommentsView = ({ data }) => {
     if (timer === 0) {
       // Call the backend endpoint manually
       axios
-        .get("http://localhost:5001/run-script")
+        .get("https://localhost:5001/run-script")
         .then((response) => {
           console.log(response.data);
           setTimer(120); // Start 2-minute timer

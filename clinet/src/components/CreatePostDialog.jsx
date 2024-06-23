@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, MenuItem, Stepper, Step, StepLabel, IconButton, Checkbox, FormControlLabel, useTheme } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, MenuItem, Stepper, Step, StepLabel, IconButton, Checkbox, FormControlLabel, useTheme, Tooltip, Typography } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
@@ -9,34 +9,29 @@ import { useCreatePublicationMutation } from "../state/api";
 
 // Define a function to handle file uploads
 const uploadFiles = async (files) => {
-  // Ensure files is an array and not undefined
   if (!Array.isArray(files) || files.length === 0) {
     throw new Error("No files provided or files parameter is not an array");
   }
 
-  // Perform file upload logic here, such as using FormData to send files to the server
   const formData = new FormData();
   files.forEach((file) => {
     formData.append("files[]", file);
   });
 
-  // Make an HTTP request to upload the files
   const response = await fetch(`${process.env.REACT_APP_BASE_URL}/upload`, {
     method: "POST",
     body: formData,
   });
 
-  // Handle the response, such as extracting file URLs
   if (response.ok) {
     const data = await response.json();
-    return data; // Return the file URLs or other relevant data
+    return data;
   } else {
     throw new Error("Failed to upload files");
   }
 };
 
 const CreatePostDialog = ({ open, onClose, algeriaCities }) => {
-  // console.log("algeriaCities:", algeriaCities); // Add this line to log the algeriaCities data
   const theme = useTheme();
   const [activeStep, setActiveStep] = useState(0);
   const [postData, setPostData] = useState({
@@ -46,14 +41,14 @@ const CreatePostDialog = ({ open, onClose, algeriaCities }) => {
     domain: "",
     startDate: "",
     endDate: "",
-    location: "", // Will be updated with the selected location
-    photos: [], // Updated to store multiple photos
+    location: "",
+    photos: [],
     participationOptions: [],
     allowAnonymousParticipation: false,
-    repeat: "none", // Reset the repeat field
+    repeat: "none",
   });
-  const [imageFileNames, setImageFileNames] = useState([]); // Updated to store multiple file names
-  const [createPublication, { isLoading }] = useCreatePublicationMutation(); // Create the createPublication mutation hook
+  const [imageFileNames, setImageFileNames] = useState([]);
+  const [createPublication, { isLoading }] = useCreatePublicationMutation();
   const [selectedFiles, setSelectedFiles] = useState([]);
   const steps = ["Enter post details", "Select dates", "Upload photos", "Review and submit"];
 
@@ -70,17 +65,14 @@ const CreatePostDialog = ({ open, onClose, algeriaCities }) => {
       photos: [],
       participationOptions: [],
       allowAnonymousParticipation: false,
-      repeat: "none", // Reset the repeat field
+      repeat: "none",
     });
     setImageFileNames([]);
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    // Convert startDate and endDate strings to Date objects
     const newValue = name === "startDate" || name === "endDate" ? new Date(value).toISOString().slice(0, 16) : value;
-
     setPostData((prevData) => ({
       ...prevData,
       [name]: newValue,
@@ -89,29 +81,22 @@ const CreatePostDialog = ({ open, onClose, algeriaCities }) => {
 
   const handleFileChange = async (e) => {
     const files = e.target.files;
-
     setSelectedFiles(files);
-    // Convert files to an array
     const filesArray = [...files];
+    setImageFileNames(filesArray.map((file) => file.name));
 
-    // Check if files exist
     if (filesArray.length > 0) {
       try {
-        // Upload files and get file URLs
         const fileUrls = await uploadFiles(filesArray);
-
-        // Update the postData.photos state with the uploaded file URLs
         setPostData((prevData) => ({
           ...prevData,
-          photos: fileUrls, // Update photos array with file URLs
+          photos: fileUrls,
         }));
       } catch (error) {
         console.error("Error uploading files:", error);
-        // Optionally handle errors here, e.g., display an error message to the user
       }
     } else {
       console.error("No files selected");
-      // Optionally handle errors here, e.g., display an error message to the user
     }
   };
 
@@ -158,40 +143,29 @@ const CreatePostDialog = ({ open, onClose, algeriaCities }) => {
 
   const handleSubmit = async (publicationData, files) => {
     try {
-      console.log("Submitting publication data:", publicationData);
-      console.log("Files:", files);
-
       if (!files) {
         throw new Error("No files provided");
       }
 
-      // Upload files first and get file URLs
       const fileUrls = await uploadFiles(files);
       const formattedFileName = `${fileUrls.firstFileName}`;
-      console.log("🚀 ~ handleSubmit ~ fileUrls:", formattedFileName);
 
-      // Add file URLs to the publication data
       const dataWithFiles = {
         ...publicationData,
         photos: formattedFileName,
       };
 
-      // Create the publication using the mutation hook
       const response = await createPublication(dataWithFiles);
 
-      console.log("Publication created:", response.data);
-
-      resetForm(); // Optionally reset the form after successful submission
+      resetForm();
       onClose();
-      // Handle success, e.g., redirect or show a success message
     } catch (error) {
       console.error("Error creating publication:", error);
-      // Handle error, e.g., display an error message to the user
     }
   };
 
   const handleCancel = () => {
-    resetForm(); // Reset form on cancel
+    resetForm();
     onClose();
   };
 
@@ -203,7 +177,7 @@ const CreatePostDialog = ({ open, onClose, algeriaCities }) => {
   };
 
   const [repeat, setRepeat] = useState("none");
-  // Add this function to handle repeat change
+
   const handleRepeatChange = (e) => {
     setRepeat(e.target.value);
     setPostData((prevData) => ({
@@ -222,7 +196,7 @@ const CreatePostDialog = ({ open, onClose, algeriaCities }) => {
               <StepLabel
                 StepIconProps={{
                   style: {
-                    color: theme.palette.mode === "light" ? "#66bb6a" : null, // Light green in light mode
+                    color: theme.palette.mode === "light" ? "#66bb6a" : null,
                   },
                 }}
               >
@@ -233,20 +207,31 @@ const CreatePostDialog = ({ open, onClose, algeriaCities }) => {
         </Stepper>
         {activeStep === 0 && (
           <React.Fragment>
-            <TextField label="Title" name="title" value={postData.title} onChange={handleChange} fullWidth margin="normal" />
-            <TextField label="Content" name="content" value={postData.content} onChange={handleChange} fullWidth margin="normal" multiline rows={4} />
-            <TextField select label="Type" name="type" value={postData.type} onChange={handleChange} fullWidth margin="normal">
-              <MenuItem value="informative">Informative</MenuItem>
-              <MenuItem value="poll">Poll</MenuItem>
-              <MenuItem value="consultation">Consultation</MenuItem>
-            </TextField>
-            <TextField select label="Domain" name="domain" value={postData.domain} onChange={handleChange} fullWidth margin="normal">
-              <MenuItem value="transportation">Transportation</MenuItem>
-              <MenuItem value="education">Education</MenuItem>
-              <MenuItem value="healthcare">Healthcare</MenuItem>
-              <MenuItem value="other">Other</MenuItem>
-            </TextField>
+            <Tooltip title="Enter the title of your post">
+              <TextField label="Title" name="title" value={postData.title} onChange={handleChange} fullWidth margin="normal" />
+            </Tooltip>
+            <Tooltip title="Enter the content of your post">
+              <TextField label="Content" name="content" value={postData.content} onChange={handleChange} fullWidth margin="normal" multiline rows={4} />
+            </Tooltip>
+            <Tooltip title="Select the type of your post">
+              <TextField select label="Type" name="type" value={postData.type} onChange={handleChange} fullWidth margin="normal">
+                <MenuItem value="informative">Informative</MenuItem>
+                <MenuItem value="poll">Poll</MenuItem>
+                <MenuItem value="consultation">Consultation</MenuItem>
+              </TextField>
+            </Tooltip>
+            <Tooltip title="Select the domain of your post">
+              <TextField select label="Domain" name="domain" value={postData.domain} onChange={handleChange} fullWidth margin="normal">
+                <MenuItem value="transportation">Transportation</MenuItem>
+                <MenuItem value="education">Education</MenuItem>
+                <MenuItem value="healthcare">Healthcare</MenuItem>
+                <MenuItem value="other">Other</MenuItem>
+              </TextField>
+            </Tooltip>
             <DialogContent>
+              <Typography variant="body2" color="textSecondary" style={{ marginBottom: "10px" }}>
+                Select the location of your post:
+              </Typography>
               <LocationMenu locations={algeriaCities} onSelectLocation={handleLocationChange} />
             </DialogContent>
 
@@ -254,7 +239,7 @@ const CreatePostDialog = ({ open, onClose, algeriaCities }) => {
             {postData.type === "poll" && (
               <React.Fragment>
                 {postData.participationOptions.map((option, index) => (
-                  <div key={index}>
+                  <div key={index} style={{ display: "flex", alignItems: "center" }}>
                     <TextField label={`Option ${index + 1}`} value={option} onChange={(e) => handleOptionChange(index, e.target.value)} fullWidth margin="normal" />
                     <IconButton onClick={() => handleRemoveOption(index)}>
                       <CloseIcon />
@@ -270,30 +255,37 @@ const CreatePostDialog = ({ open, onClose, algeriaCities }) => {
         )}
         {activeStep === 1 && (
           <React.Fragment>
-            <TextField
-              label="Start Date"
-              name="startDate"
-              type="datetime-local"
-              value={postData.startDate}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-            <TextField
-              label="End Date"
-              name="endDate"
-              type="datetime-local"
-              value={postData.endDate}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
+            <Tooltip title="Select the start date and time of your post">
+              <TextField
+                label="Start Date"
+                name="startDate"
+                type="datetime-local"
+                value={postData.startDate}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </Tooltip>
+            <Tooltip title="Select the end date and time of your post">
+              <TextField
+                label="End Date"
+                name="endDate"
+                type="datetime-local"
+                value={postData.endDate}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </Tooltip>
+            <Typography variant="body2" color="textSecondary" style={{ marginBottom: "10px" }}>
+              How often should this post repeat?
+            </Typography>
             <RadioGroup name="repeat" value={repeat} onChange={handleRepeatChange} row>
               <FormControlLabel value="none" control={<Radio />} label="None" />
               <FormControlLabel value="weekly" control={<Radio />} label="Weekly" />
@@ -304,24 +296,22 @@ const CreatePostDialog = ({ open, onClose, algeriaCities }) => {
         )}
         {activeStep === 2 && (
           <React.Fragment>
-            <input
-              accept="image/*"
-              id="contained-button-file"
-              type="file"
-              multiple // Allow multiple file selection
-              onChange={handleFileChange}
-              style={{ display: "none" }}
-              name="files[]" // Ensure the name attribute matches
-            />
-
-            <label htmlFor="contained-button-file">
-              <Button variant="contained" component="span">
-                Upload Photos
-              </Button>
-            </label>
+            <Tooltip title="Upload a photo for your post (only one image allowed)">
+              <div style={{ textAlign: "center", marginBottom: "20px" }}>
+                <input accept="image/*" id="contained-button-file" type="file" onChange={handleFileChange} style={{ display: "none" }} name="files[]" />
+                <label htmlFor="contained-button-file">
+                  <Button variant="contained" component="span" style={{ marginBottom: "10px" }}>
+                    Upload Photo
+                  </Button>
+                </label>
+                <Typography variant="body2" color="error">
+                  Limit to only one picture
+                </Typography>
+              </div>
+            </Tooltip>
             {imageFileNames.length > 0 && (
               <div>
-                <p>Selected Photos:</p>
+                <p>Selected Photo:</p>
                 <ul>
                   {imageFileNames.map((fileName, index) => (
                     <li key={index}>{fileName}</li>
@@ -337,9 +327,8 @@ const CreatePostDialog = ({ open, onClose, algeriaCities }) => {
             <p>Content: {postData.content}</p>
             <p>Type: {postData.type}</p>
             <p>Domain: {postData.domain}</p>
-            <p>Start Date: {postData.startDate.toLocaleString()}</p>
-            <p>End Date: {postData.endDate.toLocaleString()}</p>
-
+            <p>Start Date: {new Date(postData.startDate).toLocaleString()}</p>
+            <p>End Date: {new Date(postData.endDate).toLocaleString()}</p>
             <p>Location: {postData.location}</p>
             {postData.allowAnonymousParticipation && <p>Allow Anonymous Participation: Yes</p>}
             {postData.type === "poll" && (
