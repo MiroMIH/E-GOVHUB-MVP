@@ -24,8 +24,11 @@ const LocationMenu = ({ locations, onSelectLocation, selectedLocation }) => {
 
   useEffect(() => {
     if (selectedWilaya) {
-      // Filter communes based on selected wilaya
-      const filteredCommunes = locations.filter((location) => location.wilaya_id === selectedWilaya).map((location) => location.name); // Use 'name' field for commune
+      // Filter communes based on selected wilaya and sort alphabetically
+      const filteredCommunes = locations
+        .filter((location) => location.wilaya_id === selectedWilaya)
+        .map((location) => location.name)
+        .sort((a, b) => a.localeCompare(b)); // Sort alphabetically
       setCommunes(filteredCommunes);
       setSelectedCommune(""); // Reset selected commune
     }
@@ -62,7 +65,6 @@ const LocationMenu = ({ locations, onSelectLocation, selectedLocation }) => {
     <Grid container spacing={2}>
       <Grid item xs={12} sm={6}>
         <FormControl fullWidth>
-          {/* <InputLabel>Select Wilaya</InputLabel> */}
           <Select value={selectedWilaya} onChange={handleWilayaChange} fullWidth disabled>
             <MenuItem value="">Select Wilaya</MenuItem>
             {wilayas.map((wilayaID) => (

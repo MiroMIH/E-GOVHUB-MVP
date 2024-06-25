@@ -137,7 +137,7 @@ const Users = () => {
                     })
                   }
                 >
-                  {["admin", "citizen", "superadmin"].map((option) => (
+                  {["admin",  "superadmin"].map((option) => (
                     <FormControlLabel
                       key={option}
                       value={option}

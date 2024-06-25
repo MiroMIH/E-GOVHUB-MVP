@@ -1,11 +1,19 @@
 import React, { useState } from "react";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, MenuItem, Stepper, Step, StepLabel, IconButton, Checkbox, FormControlLabel, useTheme, Tooltip, Typography } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, MenuItem, Stepper, Step, StepLabel, IconButton, Checkbox, FormControlLabel, useTheme, Tooltip, Typography, InputAdornment, RadioGroup, Radio } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
-import { RadioGroup, Radio } from "@mui/material";
+import TitleIcon from '@mui/icons-material/Title';
+import DescriptionIcon from '@mui/icons-material/Description';
+import CategoryIcon from '@mui/icons-material/Category';
+import DomainIcon from '@mui/icons-material/Domain';
+import EventIcon from '@mui/icons-material/Event';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import PollIcon from '@mui/icons-material/Poll';
 import LocationMenu from "./LocationMenu"; // Import LocationMenu component
 import { useCreatePublicationMutation } from "../state/api";
+
+
 
 // Define a function to handle file uploads
 const uploadFiles = async (files) => {
@@ -237,20 +245,39 @@ const CreatePostDialog = ({ open, onClose, algeriaCities }) => {
 
             <FormControlLabel control={<Checkbox checked={postData.allowAnonymousParticipation} onChange={handleCheckboxChange} name="allowAnonymousParticipation" />} label="Allow Anonymous Participation" />
             {postData.type === "poll" && (
-              <React.Fragment>
-                {postData.participationOptions.map((option, index) => (
-                  <div key={index} style={{ display: "flex", alignItems: "center" }}>
-                    <TextField label={`Option ${index + 1}`} value={option} onChange={(e) => handleOptionChange(index, e.target.value)} fullWidth margin="normal" />
-                    <IconButton onClick={() => handleRemoveOption(index)}>
-                      <CloseIcon />
-                    </IconButton>
-                  </div>
-                ))}
-                <IconButton onClick={handleAddOption}>
-                  <AddIcon />
-                </IconButton>
-              </React.Fragment>
-            )}
+  <React.Fragment>
+    <Typography variant="h6" style={{ marginTop: "20px" }}>Participation Options</Typography>
+    <Typography variant="body2" color="textSecondary" style={{ marginBottom: "10px" }}>
+      Add options for participants to choose from:
+    </Typography>
+    {postData.participationOptions.map((option, index) => (
+      <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+        <TextField
+          label={`Option ${index + 1}`}
+          value={option}
+          onChange={(e) => handleOptionChange(index, e.target.value)}
+          fullWidth
+          margin="normal"
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        <Tooltip title="Remove this option">
+          <Button onClick={() => handleRemoveOption(index)} variant="contained" color="error" style={{ marginLeft: "10px" }}>
+            Remove
+          </Button>
+        </Tooltip>
+      </div>
+    ))}
+    <Tooltip title="Add a new option">
+      <Button onClick={handleAddOption} variant="contained" color="success">
+        Add Option
+      </Button>
+    </Tooltip>
+  </React.Fragment>
+)}
+
+
           </React.Fragment>
         )}
         {activeStep === 1 && (
@@ -322,35 +349,160 @@ const CreatePostDialog = ({ open, onClose, algeriaCities }) => {
           </React.Fragment>
         )}
         {activeStep === 3 && (
-          <React.Fragment>
-            <p>Title: {postData.title}</p>
-            <p>Content: {postData.content}</p>
-            <p>Type: {postData.type}</p>
-            <p>Domain: {postData.domain}</p>
-            <p>Start Date: {new Date(postData.startDate).toLocaleString()}</p>
-            <p>End Date: {new Date(postData.endDate).toLocaleString()}</p>
-            <p>Location: {postData.location}</p>
-            {postData.allowAnonymousParticipation && <p>Allow Anonymous Participation: Yes</p>}
-            {postData.type === "poll" && (
-              <React.Fragment>
-                <p>Participation Options:</p>
-                <ul>
-                  {postData.participationOptions.map((option, index) => (
-                    <li key={index}>{option}</li>
-                  ))}
-                </ul>
-              </React.Fragment>
-            )}
-            {postData.photos.length > 0 && (
-              <div>
-                <p>Uploaded Photos:</p>
-                {postData.photos.map((photo, index) => (
-                  <img key={index} src={photo} alt={`Uploaded Photo ${index + 1}`} style={{ maxWidth: "100%" }} />
-                ))}
-              </div>
-            )}
-          </React.Fragment>
-        )}
+  <React.Fragment>
+    <Typography variant="h6" gutterBottom>Review Your Post</Typography>
+    <TextField
+      label="Title"
+      value={postData.title}
+      InputProps={{
+        readOnly: true,
+        startAdornment: (
+          <InputAdornment position="start">
+            <TitleIcon />
+          </InputAdornment>
+        ),
+      }}
+      fullWidth
+      margin="normal"
+    />
+    <TextField
+      label="Content"
+      value={postData.content}
+      multiline
+      rows={4}
+      InputProps={{
+        readOnly: true,
+        startAdornment: (
+          <InputAdornment position="start">
+            <DescriptionIcon />
+          </InputAdornment>
+        ),
+      }}
+      fullWidth
+      margin="normal"
+    />
+    <TextField
+      label="Type"
+      value={postData.type.charAt(0).toUpperCase() + postData.type.slice(1)}
+      InputProps={{
+        readOnly: true,
+        startAdornment: (
+          <InputAdornment position="start">
+            <CategoryIcon />
+          </InputAdornment>
+        ),
+      }}
+      fullWidth
+      margin="normal"
+    />
+    <TextField
+      label="Domain"
+      value={postData.domain.charAt(0).toUpperCase() + postData.domain.slice(1)}
+      InputProps={{
+        readOnly: true,
+        startAdornment: (
+          <InputAdornment position="start">
+            <DomainIcon />
+          </InputAdornment>
+        ),
+      }}
+      fullWidth
+      margin="normal"
+    />
+    <TextField
+      label="Start Date"
+      value={new Date(postData.startDate).toLocaleString()}
+      InputProps={{
+        readOnly: true,
+        startAdornment: (
+          <InputAdornment position="start">
+            <EventIcon />
+          </InputAdornment>
+        ),
+      }}
+      fullWidth
+      margin="normal"
+    />
+    <TextField
+      label="End Date"
+      value={new Date(postData.endDate).toLocaleString()}
+      InputProps={{
+        readOnly: true,
+        startAdornment: (
+          <InputAdornment position="start">
+            <EventIcon />
+          </InputAdornment>
+        ),
+      }}
+      fullWidth
+      margin="normal"
+    />
+    <TextField
+      label="Location"
+      value={postData.location}
+      InputProps={{
+        readOnly: true,
+        startAdornment: (
+          <InputAdornment position="start">
+            <LocationOnIcon />
+          </InputAdornment>
+        ),
+      }}
+      fullWidth
+      margin="normal"
+    />
+    {postData.allowAnonymousParticipation && (
+      <TextField
+        label="Allow Anonymous Participation"
+        value="Yes"
+        InputProps={{
+          readOnly: true,
+          startAdornment: (
+            <InputAdornment position="start">
+            </InputAdornment>
+          ),
+        }}
+        fullWidth
+        margin="normal"
+      />
+    )}
+    {postData.type === "poll" && postData.participationOptions.length > 0 && (
+      <React.Fragment>
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Participation Options:</strong>
+        </Typography>
+        {postData.participationOptions.map((option, index) => (
+          <TextField
+            key={index}
+            label={`Option ${index + 1}`}
+            value={option}
+            InputProps={{
+              readOnly: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <PollIcon />
+                </InputAdornment>
+              ),
+            }}
+            fullWidth
+            margin="normal"
+          />
+        ))}
+      </React.Fragment>
+    )}
+    {postData.photos.length > 0 && (
+      <div>
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Uploaded Photos:</strong>
+        </Typography>
+        {postData.photos.map((photo, index) => (
+          <img key={index} src={photo} alt={`Uploaded Photo ${index + 1}`} style={{ maxWidth: "100%", marginBottom: "10px" }} />
+        ))}
+      </div>
+    )}
+  </React.Fragment>
+)}
+
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCancel} color="error">
