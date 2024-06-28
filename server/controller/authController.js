@@ -32,7 +32,7 @@ export const loginUser = async (req, res) => {
 
     // If authentication successful, generate a JWT token
     const token = jwt.sign(
-      { userId: user._id, email: user.email, role: user.role , commune:user.commune},
+      { userId: user._id, email: user.email, role: user.role , commune:user.commune,status:user.status},
       'your_secret_key_here', // Replace with your actual secret key
       { expiresIn: '1h' } // Token expiration time
     );
